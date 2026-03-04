@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Csocsó – Kezelő</title>
+  <link rel="stylesheet" href="/static/css/control.css" />
+</head>
+<body>
+  <h1>Csocsó – Élő eredmény kezelő</h1>
+
+  <div class="row">
+    <div class="card w520">
+      <h2>Beállítások</h2>
+
+      <div class="row">
+        <div class="min220">
+          <label>Formátum<br/>
+            <select id="bo">
+              <option value="BO1">BO1 (7 gólig)</option>
+              <option value="BO3" selected>BO3</option>
+              <option value="BO5">BO5</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="flex1">
+          <label>Csapatnév API URL<br/>
+            <input id="teamUrl" class="mono" />
+          </label>
+        </div>
+
+        <div class="min200">
+          <label>API névfrissítés<br/>
+            <select id="teamEnabled">
+              <option value="1" selected>Bekapcsolva</option>
+              <option value="0">Kikapcsolva</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div>
+          <label>Bal név (felülírás)<br/><input id="leftName" placeholder="Bal"/></label>
+          <label class="chk"><input type="checkbox" id="consLeft" /> Vigaszágról döntőzik (Bal)</label>
+        </div>
+        <div>
+          <label>Jobb név (felülírás)<br/><input id="rightName" placeholder="Jobb"/></label>
+          <label class="chk"><input type="checkbox" id="consRight" /> Vigaszágról döntőzik (Jobb)</label>
+        </div>
+      </div>
+
+      <div class="row mt10">
+        <button id="saveBtn">Mentés</button>
+        <button id="swapBtn">Oldalcsere</button>
+        <button class="warn" id="resetMatchBtn">Match reset</button>
+      </div>
+
+      <div class="small muted" id="apiStatus">…</div>
+      <div class="k muted">
+        Billentyűk: A = Bal gól, L = Jobb gól, Z = Undo, Q/W = Bal/Jobb timeout, R = Set reset, S = Oldalcsere
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Állás</h2>
+      <div class="score" id="scoreLine">…</div>
+      <div class="muted" id="detailLine">…</div>
+      <div class="muted" id="msgLine"></div>
+
+      <div class="row mt10">
+        <button class="big" id="goalLeftBtn">Bal +1</button>
+        <button class="big" id="goalRightBtn">Jobb +1</button>
+      </div>
+
+      <div class="row">
+        <button id="goalLeftMinusBtn">Bal -1</button>
+        <button id="goalRightMinusBtn">Jobb -1</button>
+        <button class="warn" id="undoBtn">Undo</button>
+      </div>
+
+      <div class="row">
+        <button id="timeoutLeftBtn">Bal időkérés</button>
+        <button id="timeoutRightBtn">Jobb időkérés</button>
+        <button id="resetSetBtn">Szett reset</button>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <a href="/">Vissza</a>
+  </div>
+
+  <script src="/static/js/control.js"></script>
+</body>
+</html>
