@@ -7,89 +7,177 @@
   <link rel="stylesheet" href="/static/css/control.css" />
 </head>
 <body>
-  <h1>Csocsó – Élő eredmény kezelő</h1>
+  <div class="page">
+    <h1>Csocsó – Élő eredmény kezelő</h1>
 
-  <div class="row">
-    <div class="card w520">
-      <h2>Beállítások</h2>
-
-      <div class="row">
-        <div class="min220">
-          <label>Formátum<br/>
-            <select id="bo">
-              <option value="BO1">BO1 (7 gólig)</option>
-              <option value="BO3" selected>BO3</option>
-              <option value="BO5">BO5</option>
-            </select>
-          </label>
-        </div>
-
-        <div class="flex1">
-          <label>Csapatnév API URL<br/>
-            <input id="teamUrl" class="mono" />
-          </label>
-        </div>
-
-        <div class="min200">
-          <label>API névfrissítés<br/>
-            <select id="teamEnabled">
-              <option value="1" selected>Bekapcsolva</option>
-              <option value="0">Kikapcsolva</option>
-            </select>
-          </label>
+    <!-- SETTINGS (top, wide) -->
+    <section class="panel settings">
+      <div class="panel-header">
+        <h2>Beállítások</h2>
+        <div class="panel-actions">
+          <button class="btn btn-ghost" id="swapBtnTop">Oldalcsere</button>
+          <button class="btn btn-danger" id="resetMatchBtnTop">Match reset</button>
         </div>
       </div>
 
-      <div class="grid2">
-        <div>
-          <label>Bal név (felülírás)<br/><input id="leftName" placeholder="Bal"/></label>
-          <label class="chk"><input type="checkbox" id="consLeft" /> Vigaszágról döntőzik (Bal)</label>
+      <div class="settings-grid-first">
+        <label class="field">
+          <span class="label">Formátum</span>
+          <select id="bo">
+            <option value="BO1">BO1 (7 gólig)</option>
+            <option value="BO3" selected>BO3</option>
+            <option value="BO5">BO5</option>
+          </select>
+        </label>
+
+        <label class="field field-wide">
+          <span class="label">Csapatnév API URL</span>
+          <input id="teamUrl" class="mono" />
+        </label>
+
+        <label class="field">
+          <span class="label">API névfrissítés</span>
+          <select id="teamEnabled">
+            <option value="1" selected>Bekapcsolva</option>
+            <option value="0">Kikapcsolva</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="settings-grid-second">
+        <label class="field">
+          <span class="label">Bal név (felülírás)</span>
+          <input id="leftName" placeholder="Bal"/>
+        </label>
+
+        <label class="field">
+          <span class="label">Jobb név (felülírás)</span>
+          <input id="rightName" placeholder="Jobb"/>
+        </label>
+
+        <label class="check">
+          <input type="checkbox" id="consLeft" />
+          <span>Vigaszágról döntőzik (Bal)</span>
+        </label>
+
+        <label class="check">
+          <input type="checkbox" id="consRight" />
+          <span>Vigaszágról döntőzik (Jobb)</span>
+        </label>
+
+        <div class="settings-footer">
+          <button class="btn btn-primary" id="saveBtn">Mentés</button>
+          <div class="status">
+            <div class="muted" id="apiStatus">…</div>
+            <div class="muted small" id="hotkeys">
+              Billentyűk: A = Bal gól, L = Jobb gól, Z = Undo, Q/W = Bal/Jobb timeout, R = Set reset, S = Oldalcsere
+            </div>
+          </div>
         </div>
-        <div>
-          <label>Jobb név (felülírás)<br/><input id="rightName" placeholder="Jobb"/></label>
-          <label class="chk"><input type="checkbox" id="consRight" /> Vigaszágról döntőzik (Jobb)</label>
+      </div>
+
+    </section>
+
+    <!-- MAIN (scores & actions) -->
+    <section class="panel main">
+      <div class="panel-header">
+        <h2>Eredmények kezelése</h2>
+        <div class="panel-actions">
+          <button class="btn btn-ghost" id="undoBtnTop">Undo last</button>
+          <button class="btn btn-ghost" id="resetSetBtnTop">Szett reset</button>
         </div>
       </div>
 
-      <div class="row mt10">
-        <button id="saveBtn">Mentés</button>
-        <button id="swapBtn">Oldalcsere</button>
-        <button class="warn" id="resetMatchBtn">Match reset</button>
+      <div class="lastline">
+        <div class="muted" id="detailFormat">…</div>
+        <div class="muted" id="detailSetsToWin">…</div>
+        <div class="muted" id="msgLine"></div>
       </div>
 
-      <div class="small muted" id="apiStatus">…</div>
-      <div class="k muted">
-        Billentyűk: A = Bal gól, L = Jobb gól, Z = Undo, Q/W = Bal/Jobb timeout, R = Set reset, S = Oldalcsere
+      <div class="two-col">
+        <!-- LEFT TEAM -->
+        <div class="team-col left">
+          <div class="team-header">
+            <div class="team-name" id="leftTitle">Bal</div>
+            <div class="team-meta" id="leftMeta">…</div>
+          </div>
+
+          <div class="team-stats">
+            <div class="stat">
+              <div class="stat-label">Szettek</div>
+              <div class="stat-value" id="leftSets">0</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Gólok</div>
+              <div class="stat-value" id="leftGoals">0</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Időkérés hátra</div>
+              <div class="stat-value" id="leftTO">2</div>
+            </div>
+          </div>
+
+          <div class="buttons">
+            <button class="btn btn-goal btn-xl" id="goalLeftBtn">GOAL +1</button>
+            <button class="btn btn-timeout btn-xl" id="timeoutLeftBtn">TIMEOUT</button>
+
+            <div class="sub-buttons">
+              <button class="btn btn-sub" id="goalLeftMinusBtn">Goal -1</button>
+              <button class="btn btn-sub" id="placeholderButton1">Haszontalan Gomb</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT TEAM -->
+        <div class="team-col right">
+          <div class="team-header">
+            <div class="team-name" id="rightTitle">Jobb</div>
+            <div class="team-meta" id="rightMeta">…</div>
+          </div>
+
+          <div class="team-stats">
+            <div class="stat">
+              <div class="stat-label">Szettek</div>
+              <div class="stat-value" id="rightSets">0</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Gólok</div>
+              <div class="stat-value" id="rightGoals">0</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Időkérés hátra</div>
+              <div class="stat-value" id="rightTO">2</div>
+            </div>
+          </div>
+
+          <div class="buttons">
+            <button class="btn btn-goal btn-xl" id="goalRightBtn">GOAL +1</button>
+            <button class="btn btn-timeout btn-xl" id="timeoutRightBtn">TIMEOUT</button>
+
+            <div class="sub-buttons">
+              <button class="btn btn-sub" id="goalRightMinusBtn">Goal -1</button>
+              <button class="btn btn-sub" id="placeholderButton2">Haszontalan Gomb</button>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <div class="card">
-      <h2>Állás</h2>
-      <div class="score" id="scoreLine">…</div>
-      <div class="muted" id="detailLine">…</div>
-      <div class="muted" id="msgLine"></div>
+      <!-- CUSTOM FUNCTIONS -->
+      <div class="panel functions">
+        <div class="panel-header small-header">
+          <h3>OBS Kontrol Gombok</h3>
+          <div class="muted small">Ezekkel a gombokkal lehet majd az OBS-t irányítani. Klippeket kivágni, visszalassítani gólokat, szetteket.</div>
+        </div>
 
-      <div class="row mt10">
-        <button class="big" id="goalLeftBtn">Bal +1</button>
-        <button class="big" id="goalRightBtn">Jobb +1</button>
+        <div class="func-grid">
+          <button class="btn btn-func" id="fn1">button_function_1</button>
+          <button class="btn btn-func" id="fn2">button_function_2</button>
+          <button class="btn btn-func" id="fn3">button_function_3</button>
+          <button class="btn btn-func" id="fn4">button_function_4</button>
+          <button class="btn btn-func" id="fn5">button_function_5</button>
+        </div>
       </div>
-
-      <div class="row">
-        <button id="goalLeftMinusBtn">Bal -1</button>
-        <button id="goalRightMinusBtn">Jobb -1</button>
-        <button class="warn" id="undoBtn">Undo</button>
-      </div>
-
-      <div class="row">
-        <button id="timeoutLeftBtn">Bal időkérés</button>
-        <button id="timeoutRightBtn">Jobb időkérés</button>
-        <button id="resetSetBtn">Szett reset</button>
-      </div>
-    </div>
-  </div>
-
-  <div>
-    <a href="/">Vissza</a>
+    </section>
   </div>
 
   <script src="/static/js/control.js"></script>
