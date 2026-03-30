@@ -1,7 +1,9 @@
 from flask import Blueprint, jsonify, render_template, request
 from . import state as S
 from .obs_actions import (
-    button_function_1, button_function_2, button_function_3, button_function_4, button_function_5
+    button_function_1, button_function_2, button_function_3, button_function_4, button_function_5,
+    button_function_6, button_function_7, button_function_8, button_function_9, button_function_10,
+    button_function_11, button_function_12, button_function_13, button_function_14, button_function_15
 )
 
 bp = Blueprint("main", __name__)
@@ -103,6 +105,46 @@ def action():
 
     if action == "button_function_5":
         button_function_5()
+        return jsonify({"ok": True})
+
+    if action == "button_function_6":
+        button_function_6()
+        return jsonify({"ok": True})
+
+    if action == "button_function_7":
+        button_function_7()
+        return jsonify({"ok": True})
+
+    if action == "button_function_8":
+        button_function_8()
+        return jsonify({"ok": True})
+
+    if action == "button_function_9":
+        button_function_9()
+        return jsonify({"ok": True})
+
+    if action == "button_function_10":
+        button_function_10()
+        return jsonify({"ok": True})
+
+    if action == "button_function_11":
+        button_function_11()
+        return jsonify({"ok": True})
+
+    if action == "button_function_12":
+        button_function_12()
+        return jsonify({"ok": True})
+
+    if action == "button_function_13":
+        button_function_13()
+        return jsonify({"ok": True})
+
+    if action == "button_function_14":
+        button_function_14()
+        return jsonify({"ok": True})
+
+    if action == "button_function_15":
+        button_function_15()
         return jsonify({"ok": True})
 
     # ismeretlen action: undo push visszavonása (egyszerűen pop)

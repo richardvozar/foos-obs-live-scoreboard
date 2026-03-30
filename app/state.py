@@ -13,8 +13,9 @@ def get_timeout_emoji(timeouts: int) -> str:
         timeouts = int(timeouts)
     timeout_emoji = '⏱️'
     used_timeout_emoji = '❌'
-    
-    return timeout_emoji * timeouts + (2 - timeouts) * used_timeout_emoji
+
+    #return timeout_emoji * timeouts + (2 - timeouts) * used_timeout_emoji
+    return (2 - timeouts) * used_timeout_emoji
 
 def new_state():
     return {

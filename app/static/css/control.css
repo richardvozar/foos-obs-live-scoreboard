@@ -195,6 +195,8 @@ input, select{
 }
 .btn-func{ background: rgba(167,139,250,0.18); border-color: rgba(167,139,250,0.55); font-size: 13px; }
 
+.btn-func2{ background: rgba(167,139,250,0.18); border-color: rgba(250,12,12,0.75); font-size: 13px; }
+
 @media (max-width: 980px){
   .settings-grid{ grid-template-columns: 1fr; }
   .field-wide{ grid-column: auto; }

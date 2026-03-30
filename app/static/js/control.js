@@ -189,6 +189,16 @@ function wireButtons(){
   document.getElementById('fn3').addEventListener('click', async () => { await post('button_function_3'); });
   document.getElementById('fn4').addEventListener('click', async () => { await post('button_function_4'); });
   document.getElementById('fn5').addEventListener('click', async () => { await post('button_function_5'); });
+  document.getElementById('fn6').addEventListener('click', async () => { await post('button_function_6'); });
+  document.getElementById('fn7').addEventListener('click', async () => { await post('button_function_7'); });
+  document.getElementById('fn8').addEventListener('click', async () => { await post('button_function_8'); });
+  document.getElementById('fn9').addEventListener('click', async () => { await post('button_function_9'); });
+  document.getElementById('fn10').addEventListener('click', async () => { await post('button_function_10'); });
+  document.getElementById('fn11').addEventListener('click', async () => { await post('button_function_11'); });
+  document.getElementById('fn12').addEventListener('click', async () => { await post('button_function_12'); });
+  document.getElementById('fn13').addEventListener('click', async () => { await post('button_function_13'); });
+  document.getElementById('fn14').addEventListener('click', async () => { await post('button_function_14'); });
+  document.getElementById('fn15').addEventListener('click', async () => { await post('button_function_15'); });
 
   // hotkeys
   document.addEventListener('keydown', async (e) => {
