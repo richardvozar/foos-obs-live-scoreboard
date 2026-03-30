@@ -9,6 +9,26 @@ pip install -r requirements.txt
 python run.py
 ```
 
+## Setup OBS WebSocket
+```python
+# IN OBS click: Tools → WebSocket Server Settings
+# Turn ON the Enable WebSocket server option
+# Set up a password
+
+# In python backend you can connect easily with for e.g.:
+import obsws_python as obs
+
+HOST = "127.0.0.1"
+PORT = 4455
+PASSWORD = "your_password"
+
+with obs.ReqClient(host=HOST, port=PORT, password=PASSWORD, timeout=5) as cl:
+    status = cl.get_replay_buffer_status()
+    print(status)
+
+# or in this project just change the password in app/obs_action_utils.py
+```
+
 ## Integrate to OBS
 ```bash
 Install URL Source plugin
