@@ -1,9 +1,8 @@
 from flask import Blueprint, jsonify, render_template, request
 from . import state as S
 from .obs_actions import (
-    button_function_1, button_function_2, button_function_3, button_function_4, button_function_5,
-    button_function_6, button_function_7, button_function_8, button_function_9, button_function_10,
-    button_function_11, button_function_12, button_function_13, button_function_14, button_function_15
+    button_save_goal, button_save_fault, button_save_other, button_replay_goal,
+    button_replay_fault, button_replay_set, button_replay_match, button_back_to_live
 )
 
 bp = Blueprint("main", __name__)
@@ -87,65 +86,40 @@ def action():
         S.action_timeout("right")
         return jsonify({"ok": True})
 
-    if action == "button_function_1":
-        button_function_1()
+
+    if action == "button_save_goal":
+        button_save_goal()
         return jsonify({"ok": True})
 
-    if action == "button_function_2":
-        button_function_2()
+    if action == "button_save_fault":
+        button_save_fault()
         return jsonify({"ok": True})
 
-    if action == "button_function_3":
-        button_function_3()
+    if action == "button_save_other":
+        button_save_other()
         return jsonify({"ok": True})
 
-    if action == "button_function_4":
-        button_function_4()
+    if action == "button_replay_goal":
+        button_replay_goal()
         return jsonify({"ok": True})
 
-    if action == "button_function_5":
-        button_function_5()
+    if action == "button_replay_fault":
+        button_replay_fault()
         return jsonify({"ok": True})
 
-    if action == "button_function_6":
-        button_function_6()
+    if action == "button_replay_set":
+        button_replay_set()
         return jsonify({"ok": True})
 
-    if action == "button_function_7":
-        button_function_7()
+    if action == "button_replay_match":
+        button_replay_match()
         return jsonify({"ok": True})
 
-    if action == "button_function_8":
-        button_function_8()
+    if action == "button_back_to_live":
+        button_back_to_live()
         return jsonify({"ok": True})
 
-    if action == "button_function_9":
-        button_function_9()
-        return jsonify({"ok": True})
 
-    if action == "button_function_10":
-        button_function_10()
-        return jsonify({"ok": True})
-
-    if action == "button_function_11":
-        button_function_11()
-        return jsonify({"ok": True})
-
-    if action == "button_function_12":
-        button_function_12()
-        return jsonify({"ok": True})
-
-    if action == "button_function_13":
-        button_function_13()
-        return jsonify({"ok": True})
-
-    if action == "button_function_14":
-        button_function_14()
-        return jsonify({"ok": True})
-
-    if action == "button_function_15":
-        button_function_15()
-        return jsonify({"ok": True})
 
     # ismeretlen action: undo push visszavonása (egyszerűen pop)
     # (nem kritikus, de tiszta)

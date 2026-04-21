@@ -183,22 +183,15 @@ function wireButtons(){
     await refresh();
   });
 
-  // custom functions
-  document.getElementById('fn1').addEventListener('click', async () => { await post('button_function_1'); });
-  document.getElementById('fn2').addEventListener('click', async () => { await post('button_function_2'); });
-  document.getElementById('fn3').addEventListener('click', async () => { await post('button_function_3'); });
-  document.getElementById('fn4').addEventListener('click', async () => { await post('button_function_4'); });
-  document.getElementById('fn5').addEventListener('click', async () => { await post('button_function_5'); });
-  document.getElementById('fn6').addEventListener('click', async () => { await post('button_function_6'); });
-  document.getElementById('fn7').addEventListener('click', async () => { await post('button_function_7'); });
-  document.getElementById('fn8').addEventListener('click', async () => { await post('button_function_8'); });
-  document.getElementById('fn9').addEventListener('click', async () => { await post('button_function_9'); });
-  document.getElementById('fn10').addEventListener('click', async () => { await post('button_function_10'); });
-  document.getElementById('fn11').addEventListener('click', async () => { await post('button_function_11'); });
-  document.getElementById('fn12').addEventListener('click', async () => { await post('button_function_12'); });
-  document.getElementById('fn13').addEventListener('click', async () => { await post('button_function_13'); });
-  document.getElementById('fn14').addEventListener('click', async () => { await post('button_function_14'); });
-  document.getElementById('fn15').addEventListener('click', async () => { await post('button_function_15'); });
+  // OBS BUTTONS
+  document.getElementById('save_goal').addEventListener('click', async () => { await post('button_save_goal'); });
+  document.getElementById('save_fault').addEventListener('click', async () => { await post('button_save_fault'); });
+  document.getElementById('save_other').addEventListener('click', async () => { await post('button_save_other'); });
+  document.getElementById('replay_goal').addEventListener('click', async () => { await post('button_replay_goal'); });
+  document.getElementById('replay_fault').addEventListener('click', async () => { await post('button_replay_fault'); });
+  document.getElementById('replay_set').addEventListener('click', async () => { await post('button_replay_set'); });
+  document.getElementById('replay_match').addEventListener('click', async () => { await post('button_replay_match'); });
+  document.getElementById('back_to_live').addEventListener('click', async () => { await post('button_back_to_live'); });
 
   // hotkeys
   document.addEventListener('keydown', async (e) => {
@@ -212,6 +205,10 @@ function wireButtons(){
     if (k === 'r') { await post('reset_set'); await refresh(); }
     if (k === 's') { await post('swap_sides'); await refresh(); }
   });
+}
+
+function togglePanel() {
+  document.getElementById("configPanel").classList.toggle("collapsed");
 }
 
 (async function init(){

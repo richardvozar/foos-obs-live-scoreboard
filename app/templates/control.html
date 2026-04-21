@@ -10,10 +10,11 @@
   <div class="page">
     <h1>Csocsó – Élő eredmény kezelő</h1>
 
+    <button id="togglePanelButton" class="btn btn-primary" onclick="togglePanel()">Beállítások elrejtése</button>
     <!-- SETTINGS (top, wide) -->
-    <section class="panel settings">
+    <section id="configPanel" class="panel settings">
       <div class="panel-header">
-        <h2>Beállítások</h2>
+        <h2 id="beallitasokString">Beállítások</h2>
         <div class="panel-actions">
           <button class="btn btn-ghost" id="swapBtnTop">Oldalcsere</button>
           <button class="btn btn-danger" id="resetMatchBtnTop">Match reset</button>
@@ -162,69 +163,36 @@
         </div>
       </div>
 
-      <div class="two-col">
-        <!-- CUSTOM FUNCTIONS -->
-        <div class="panel functions">
-          <div class="panel-header small-header">
-            <h3>💾OBS KLIPP MENTÉS💾</h3>
-            <div class="muted small">Bal csapatnak</div>
+      <!-- KLIPP MENTÉS -->
+      <div class="panel functions">
+        <div class="panel-header small-header">
+            <h3>💾KLIPP MENTÉS💾</h3>
+            <div class="muted small">A gól automatikusan visszajátszódik.</div>
           </div>
 
-          <div class="func-grid">
-            <button class="btn btn-func" id="fn2">PASSZ - középpálya</button>
-            <button class="btn btn-func" id="fn4">PASSZ - kapus</button>
-            <button class="btn btn-func" id="fn6">Lövés - nem gól</button>
-          </div>
-        </div>
-
-
-        <!-- REPLAY FUNCTIONS -->
-        <div class="panel functions">
-          <div class="panel-header small-header">
-            <h3>💾OBS KLIPP MENTÉS💾</h3>
-            <div class="muted small">Jobb csapatnak</div>
-          </div>
-
-          <div class="func-grid">
-            <button class="btn btn-func" id="fn3">PASSZ - középpálya</button>
-            <button class="btn btn-func" id="fn5">PASSZ - kapus</button>
-            <button class="btn btn-func" id="fn7">Lövés - nem gól</button>
-          </div>
+        <div class="team-stats">
+          <button class="btn btn-func" id="save_goal">GÓL</button>
+          <button class="btn btn-func" id="save_fault">FAULT</button>
+          <button class="btn btn-func" id="save_other">MÁS</button>
         </div>
       </div>
 
-
-        <!-- REPLAY FUNCTIONS -->
-        <div class="panel functions">
+      <!-- VISSZAJÁTSZÁS -->
+      <div class="panel functions">
           <div class="panel-header small-header">
-            <h3>▶️OBS KLIPP VISSZAJÁTSZÁS▶️ (betöltés a streambe és lejátszás)</h3>
+            <h3>▶️VISSZAJÁTSZÁS▶️</h3>
             <div class="muted small">Ezekkel a gombokkal lehet visszalassítani gólokat, passzokat, védéseket, teljes szetteket.</div>
           </div>
 
           <div class="func-grid">
-            <button class="btn btn-func" id="fn9">Legutóbbi gól</button>
-            <button class="btn btn-func" id="fn10">Legutóbbi (bármilyen) klipp</button>
-            <button class="btn btn-func" id="fn11">Legutóbbi fault szitu</button>
-            <button class="btn btn-func" id="fn12">Eddigi szett (aktuális)</button>
-            <button class="btn btn-func" id="fn13">Előző szett</button>
-            <button class="btn btn-func" id="fn14">Teljes meccs</button>
+            <button class="btn btn-func" id="replay_goal">GÓL</button>
+            <button class="btn btn-func" id="replay_fault">FAULT</button>
+            <button class="btn btn-func" id="replay_set">SZETT</button>
+            <button class="btn btn-func" id="replay_match">MECCS</button>
+            <button class="btn btn-func2" id="back_to_live">AZONNAL VISSZA AZ ÉLŐRE</button>
           </div>
-        </div>
+      </div>
 
-
-      <!-- CUSTOM FUNCTIONS -->
-        <div class="panel functions">
-          <div class="panel-header small-header">
-            <h3>⚡️INSTANT REPLAY⚡️ - gól és fault</h3>
-            <div class="muted small">Valami hint...</div>
-          </div>
-
-          <div class="func-grid">
-            <button class="btn btn-func" id="fn1">GÓL</button>
-            <button class="btn btn-func" id="fn8">FAULT</button>
-            <button class="btn btn-func2" id="fn15">AZONNAL VISSZA AZ ÉLŐRE</button>
-          </div>
-        </div>
     </section>
   </div>
 
