@@ -4,7 +4,11 @@ import threading
 import requests
 from .rules import required_sets_to_win, set_target
 
-TEAM_SOURCE_URL_DEFAULT = "https://live.szegedicsocso.hu/table.php?tourid=998&tableid=1"
+TOURID = 998
+TEAM_SOURCE_URL_DEFAULT = f"https://live.szegedicsocso.hu/table.php?tourid={TOURID}&tableid=1"
+POST_RESULT_URL = 'https://admin.szegedicsocso.hu/live-ajax.php'
+ADMIN_USER = 'vcse'
+ADMIN_PASSWORD = 'VIHAR2026sarok'
 
 def get_current_match_id():
     try:
@@ -16,6 +20,93 @@ def get_current_match_id():
     except:
         match_id = "no_match"
     return match_id
+
+def get_teams_with_id() -> dict:
+    try:
+        r = requests.get(TEAM_SOURCE_URL_DEFAULT)
+        data = r.json()
+        team1 = data["team1"]
+        team1id = data["team1id"]
+        team2 = data["team2"]
+        team2id = data["team2id"]
+    except:
+        print("no active match found")
+    return {"team1": team1, "team2": team2, "team1id": team1id, "team2id": team2id}
+
+def get_teams_with_sets_after_game():
+    left = {
+        "team": _STATE["match"]["teams"]["left"],
+        "sets": _STATE["score"]["sets_left"]
+    }
+    right = {
+        "team": _STATE["match"]["teams"]["right"],
+        "sets": _STATE["score"]["sets_right"]
+    }
+
+    teams_with_id = get_teams_with_id()
+
+    if left["team"] == teams_with_id["team1"]:
+        team1 = left
+        team2 = right
+    else:
+        team1 = right
+        team2 = left
+
+    return team1, team2
+
+
+def get_payload_with_match_details():
+    """Returns with payload without score1 and score2"""
+    try:
+        r = requests.get(TEAM_SOURCE_URL_DEFAULT)
+        data = r.json()
+        payload = {
+            "tourid": TOURID,
+            "category": data["category_key"],
+            "action": "save_match",
+            "matchstring": data["matchstring"],
+            "branchid": data["branchid"],
+            "roundid": data["roundid"],
+            "matchid": data["matchid"],
+            "team1id": data["team1id"],
+            "team2id": data["team2id"]
+        }
+        return payload
+    except:
+        print("no active match found")
+        return {}
+
+def post_winner():
+    winner_team = _match_over_winner()
+    print(f"Meccs vége, nyert: {winner_team}")
+
+    teams_with_id = get_teams_with_id()
+
+    if winner_team == teams_with_id["team1"]:
+        winner_id = teams_with_id["team1id"]
+    else:
+        winner_id = teams_with_id["team2id"]
+
+    payload = get_payload_with_match_details()
+
+    if _STATE["match"]["bo"] in ["BO3", "BO5"]:
+        team1, team2 = get_teams_with_sets_after_game()
+        payload["score1"] = team1["sets"]
+        payload["score2"] = team2["sets"]
+    else:
+        print("Kvali 1 szett 7-re nincs implementáció.")
+
+    response = requests.post(
+        POST_RESULT_URL,
+        data=payload,
+        auth=(ADMIN_USER, ADMIN_PASSWORD)
+    )
+    print(f"{payload = }")
+
+    # debug / validation
+    print("Status:", response.status_code)
+    print("Response:", response.text)
+
 
 def now_ms():
     return int(time.time() * 1000)
@@ -101,6 +192,13 @@ def undo():
 def _match_over_unlocked():
     req_left, req_right = required_sets_to_win(_STATE)
     return _STATE["score"]["sets_left"] >= req_left or _STATE["score"]["sets_right"] >= req_right
+
+def _match_over_winner():
+    req_left, req_right = required_sets_to_win(_STATE)
+    if _STATE["score"]["sets_left"] >= req_left:
+        return _STATE["match"]["teams"]["left"]
+    if _STATE["score"]["sets_right"] >= req_right:
+        return _STATE["match"]["teams"]["right"]
 
 def _reset_set_unlocked():
     _STATE["score"]["goals_left"] = 0
@@ -260,6 +358,11 @@ def action_goal(side: str, delta: int):
         _check_auto_set_win_unlocked()
 
     _STATE["ts"] = now_ms()
+
+    if _match_over_unlocked():
+        post_winner()
+
+
 
 @with_lock
 def action_timeout(side: str):
