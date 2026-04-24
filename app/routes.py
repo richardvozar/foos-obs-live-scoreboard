@@ -2,7 +2,8 @@ from flask import Blueprint, jsonify, render_template, request
 from . import state as S
 from .obs_actions import (
     button_save_goal, button_save_fault, button_save_other, button_replay_goal,
-    button_replay_fault, button_replay_set, button_replay_match, button_back_to_live
+    button_replay_fault, button_replay_set, button_replay_match, button_back_to_live,
+    update_match_id
 )
 
 bp = Blueprint("main", __name__)
@@ -62,6 +63,7 @@ def action():
         S.action_reset_match()
         return jsonify({"ok": True})
 
+    # UI Buttons functions
     if action == "goal_left":
         S.action_goal("left", +1)
         return jsonify({"ok": True})
@@ -117,6 +119,11 @@ def action():
 
     if action == "button_back_to_live":
         button_back_to_live()
+        return jsonify({"ok": True})
+
+    if action == "update_match_id":
+        match_id = S.get_current_match_id()
+        update_match_id(match_id)
         return jsonify({"ok": True})
 
 
