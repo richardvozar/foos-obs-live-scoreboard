@@ -1,5 +1,6 @@
 let editing = false;
 let editTimer = null;
+let refresh_match_timer = 0;
 
 function markEditing(){
   editing = true;
@@ -80,6 +81,16 @@ async function refresh(){
     consLeft.disabled = !!s.match.from_consolation_right || (s.match.bo === "BO1");
     consRight.disabled = !!s.match.from_consolation_left || (s.match.bo === "BO1");
   }
+
+  // Match ID
+  document.getElementById('matchid').textContent = `Match ID: ${s.match.match_id}`;
+  // 10 * 0.5 = 5 sec for refreshing match_id
+  if (refresh_match_timer >= 10) {
+    await post('update_match_id', {match_id:s.match.match_id});
+    refresh_match_timer = 0;
+  }
+  refresh_match_timer++;
+
 
   // API status line
   const okTs = s.match.team_source_last_ok_ts ? new Date(s.match.team_source_last_ok_ts).toLocaleTimeString() : "—";

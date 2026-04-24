@@ -1,9 +1,21 @@
 import copy
 import time
 import threading
+import requests
 from .rules import required_sets_to_win, set_target
 
-TEAM_SOURCE_URL_DEFAULT = "https://live.szegedicsocso.hu/table.php?tourid=101&tableid=1"
+TEAM_SOURCE_URL_DEFAULT = "https://live.szegedicsocso.hu/table.php?tourid=998&tableid=1"
+
+def get_current_match_id():
+    try:
+        r = requests.get(TEAM_SOURCE_URL_DEFAULT)
+        data = r.json()
+        category_key = data["category_key"]
+        matchstring = data["matchstring"]
+        match_id = f'cat_{category_key}_{matchstring}'
+    except:
+        match_id = "no_match"
+    return match_id
 
 def now_ms():
     return int(time.time() * 1000)
@@ -14,8 +26,8 @@ def get_timeout_emoji(timeouts: int) -> str:
     timeout_emoji = '⏱️'
     used_timeout_emoji = '❌'
 
-    #return timeout_emoji * timeouts + (2 - timeouts) * used_timeout_emoji
-    return (2 - timeouts) * used_timeout_emoji
+    return timeout_emoji * timeouts + (2 - timeouts) * used_timeout_emoji
+    #return (2 - timeouts) * used_timeout_emoji
 
 def new_state():
     return {
@@ -29,6 +41,7 @@ def new_state():
             "team_source_enabled": True,
             "team_source_last_ok_ts": None,
             "team_source_last_error": "",
+            "match_id": get_current_match_id(),
         },
         "score": {
             "goals_left": 0,
@@ -63,7 +76,7 @@ def get_state_for_api():
 
 @with_lock
 def get_state_ref():
-    # belső használatra (lock alatt hívod)
+    # belső használatra (lock alatt hívom)
     return _STATE
 
 @with_lock
