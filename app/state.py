@@ -4,11 +4,11 @@ import threading
 import requests
 from .rules import required_sets_to_win, set_target
 
-TOURID = 998
+TOURID = 101
 TEAM_SOURCE_URL_DEFAULT = f"https://live.szegedicsocso.hu/table.php?tourid={TOURID}&tableid=1"
 POST_RESULT_URL = 'https://admin.szegedicsocso.hu/live-ajax.php'
-ADMIN_USER = 'vcse'
-ADMIN_PASSWORD = 'VIHAR2026sarok'
+ADMIN_USER = 'szcse-admin'
+ADMIN_PASSWORD = 'csocso05'
 
 def get_current_match_id():
     try:
@@ -62,7 +62,9 @@ def get_payload_with_match_details():
         data = r.json()
         payload = {
             "tourid": TOURID,
-            "category": data["category_key"],
+            "category_key": data["category_key"],
+            "category": data["category"],
+            "stage": data["stage"],
             "action": "save_match",
             "matchstring": data["matchstring"],
             "branchid": data["branchid"],
@@ -75,6 +77,24 @@ def get_payload_with_match_details():
     except:
         print("no active match found")
         return {}
+
+def get_stage():
+    try:
+        r = requests.get(TEAM_SOURCE_URL_DEFAULT)
+        data = r.json()
+        return data["stage"]
+    except:
+        print("no active match found")
+        return ""
+
+def get_category():
+    try:
+        r = requests.get(TEAM_SOURCE_URL_DEFAULT)
+        data = r.json()
+        return data["category"]
+    except:
+        print("no active match found")
+        return ""
 
 def post_winner():
     winner_team = _match_over_winner()
@@ -117,8 +137,8 @@ def get_timeout_emoji(timeouts: int) -> str:
     timeout_emoji = '⏱️'
     used_timeout_emoji = '❌'
 
-    return timeout_emoji * timeouts + (2 - timeouts) * used_timeout_emoji
-    #return (2 - timeouts) * used_timeout_emoji
+    #return timeout_emoji * timeouts + (2 - timeouts) * used_timeout_emoji
+    return (2 - timeouts) * used_timeout_emoji
 
 def new_state():
     return {
@@ -133,12 +153,16 @@ def new_state():
             "team_source_last_ok_ts": None,
             "team_source_last_error": "",
             "match_id": get_current_match_id(),
+            "stage": get_stage(),
+            "category": get_category()
         },
         "score": {
             "goals_left": 0,
             "goals_right": 0,
             "sets_left": 0,
             "sets_right": 0,
+            "sets_history_left": [],
+            "sets_history_right": [],
             "timeouts_left": 2,
             "timeouts_right": 2,
             "timeouts_left_string": get_timeout_emoji(2),
@@ -211,9 +235,13 @@ def _reset_set_unlocked():
 def _apply_set_win_unlocked(winner: str):
     if winner == "left":
         _STATE["score"]["sets_left"] += 1
+        _STATE["score"]["sets_history_left"].append(_STATE["score"]["goals_left"])
+        _STATE["score"]["sets_history_right"].append(_STATE["score"]["goals_right"])
         _STATE["meta"]["message"] = "Szett – Bal"
     else:
         _STATE["score"]["sets_right"] += 1
+        _STATE["score"]["sets_history_left"].append(_STATE["score"]["goals_left"])
+        _STATE["score"]["sets_history_right"].append(_STATE["score"]["goals_right"])
         _STATE["meta"]["message"] = "Szett – Jobb"
     _reset_set_unlocked()
 
@@ -325,6 +353,8 @@ def action_reset_match():
     global _STATE
     bo = _STATE["match"]["bo"]
     teams = copy.deepcopy(_STATE["match"]["teams"])
+    stage = copy.deepcopy(_STATE["match"]["stage"])
+    category = copy.deepcopy(_STATE["match"]["category"])
     consL = _STATE["match"]["from_consolation_left"]
     consR = _STATE["match"]["from_consolation_right"]
     url = _STATE["match"]["team_source_url"]
@@ -337,6 +367,8 @@ def action_reset_match():
     _STATE["match"]["from_consolation_right"] = consR
     _STATE["match"]["team_source_url"] = url
     _STATE["match"]["team_source_enabled"] = en
+    _STATE["match"]["category"] = category
+    _STATE["match"]["stage"] = stage
     _STATE["meta"]["message"] = "Match reset"
     _STATE["ts"] = now_ms()
 
