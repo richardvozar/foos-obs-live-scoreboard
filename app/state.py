@@ -4,18 +4,27 @@ import threading
 import requests
 from .rules import required_sets_to_win, set_target
 
-TOURID = 101
-TEAM_SOURCE_URL_DEFAULT = f"https://live.szegedicsocso.hu/table.php?tourid={TOURID}&tableid=1"
+TOURID = 998
+TABLEID = 1
+TEAM_SOURCE_URL_DEFAULT = f"https://live.szegedicsocso.hu/table.php?tourid={TOURID}&tableid={TABLEID}"
 POST_RESULT_URL = 'https://admin.szegedicsocso.hu/live-ajax.php'
 ADMIN_USER = 'szcse-admin'
 ADMIN_PASSWORD = 'csocso05'
 
+
+def get_active_url() -> str:
+    """Visszaadja a jelenleg beállított API URL-t, vagy az alapértelmezettet."""
+    try:
+        return _STATE["match"].get("team_source_url") or TEAM_SOURCE_URL_DEFAULT
+    except:
+        return TEAM_SOURCE_URL_DEFAULT
+
 def get_current_match_id():
     try:
-        r = requests.get(TEAM_SOURCE_URL_DEFAULT)
+        r = requests.get(get_active_url(), timeout=3)
         data = r.json()
-        category_key = data["category_key"]
-        matchstring = data["matchstring"]
+        category_key = data.get("category_key", "")
+        matchstring = data.get("matchstring", "")
         match_id = f'cat_{category_key}_{matchstring}'
     except:
         match_id = "no_match"
@@ -80,18 +89,18 @@ def get_payload_with_match_details():
 
 def get_stage():
     try:
-        r = requests.get(TEAM_SOURCE_URL_DEFAULT)
+        r = requests.get(get_active_url(), timeout=3)
         data = r.json()
-        return data["stage"]
+        return data.get("stage") or ""
     except:
         print("no active match found")
         return ""
 
 def get_category():
     try:
-        r = requests.get(TEAM_SOURCE_URL_DEFAULT)
+        r = requests.get(get_active_url(), timeout=3)
         data = r.json()
-        return data["category"]
+        return data.get("category") or ""
     except:
         print("no active match found")
         return ""
@@ -146,6 +155,7 @@ def new_state():
         "match": {
             "bo": "BO3",
             "teams": {"left": "Bal", "right": "Jobb"},
+            "live_score": True,  # Élő score kijelzés alapértelmezetten bekapcsolva
             "from_consolation_left": False,
             "from_consolation_right": False,
             "team_source_url": TEAM_SOURCE_URL_DEFAULT,
@@ -301,6 +311,10 @@ def action_set_settings(payload: dict):
     _STATE["match"]["from_consolation_left"] = consL
     _STATE["match"]["from_consolation_right"] = consR
 
+    # ÚJ: Live Score gomb állapotának elmentése
+    if "live_score" in payload:
+        _STATE["match"]["live_score"] = bool(payload.get("live_score"))
+
     _STATE["meta"]["message"] = "Beállítások mentve"
     _STATE["ts"] = now_ms()
 
@@ -359,6 +373,7 @@ def action_reset_match():
     consR = _STATE["match"]["from_consolation_right"]
     url = _STATE["match"]["team_source_url"]
     en = _STATE["match"]["team_source_enabled"]
+    live_score = _STATE["match"].get("live_score", True)  # ÚJ: megőrizzük a beállítást
 
     _STATE = new_state()
     _STATE["match"]["bo"] = bo
@@ -369,6 +384,7 @@ def action_reset_match():
     _STATE["match"]["team_source_enabled"] = en
     _STATE["match"]["category"] = category
     _STATE["match"]["stage"] = stage
+    _STATE["match"]["live_score"] = live_score  # ÚJ
     _STATE["meta"]["message"] = "Match reset"
     _STATE["ts"] = now_ms()
 
@@ -415,8 +431,10 @@ def action_timeout(side: str):
     _STATE["ts"] = now_ms()
 
 @with_lock
-def update_team_names(left_name: str | None, right_name: str | None):
+def update_team_names(left_name: str, right_name: str, category: str, stage: str):
     changed = False
+
+    # Csapatnevek frissítése
     if left_name and left_name != _STATE["match"]["teams"]["left"]:
         _STATE["match"]["teams"]["left"] = left_name
         changed = True
@@ -424,8 +442,17 @@ def update_team_names(left_name: str | None, right_name: str | None):
         _STATE["match"]["teams"]["right"] = right_name
         changed = True
 
+    # Kategória és Stage dinamikus frissítése (ha érkezik az API-ból)
+    if category is not None and category != _STATE["match"]["category"]:
+        _STATE["match"]["category"] = category
+        changed = True
+    if stage is not None and stage != _STATE["match"]["stage"]:
+        _STATE["match"]["stage"] = stage
+        changed = True
+
     if changed:
-        _STATE["meta"]["message"] = "Csapatnevek frissítve (API)"
+        _STATE["meta"]["message"] = "Meccs adatok frissítve (API)"
+
     _STATE["match"]["team_source_last_ok_ts"] = now_ms()
     _STATE["match"]["team_source_last_error"] = ""
     _STATE["ts"] = now_ms()

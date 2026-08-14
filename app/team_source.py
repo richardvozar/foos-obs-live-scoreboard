@@ -32,10 +32,15 @@ def fetch_teams(url: str):
         raw = resp.read()
     data = json.loads(raw.decode("utf-8", errors="replace"))
 
-    # user: JSONPath $.team1
+    # Csapatnevek kinyerése
     t1 = extract_team_name(data.get("team1"))
     t2 = extract_team_name(data.get("team2"))
-    return t1, t2
+
+    # ÚJ: Kategória és stage kinyerése az API válaszból
+    category = data.get("category")
+    stage = data.get("stage")
+
+    return t1, t2, category, stage
 
 def loop():
     while True:
@@ -49,8 +54,10 @@ def loop():
             continue
 
         try:
-            left, right = fetch_teams(url)
-            update_team_names(left, right)
+            # ÚJ: Megkapjuk a 4 értéket az API-ból
+            left, right, category, stage = fetch_teams(url)
+            # ÚJ: Átadunk mindent a state.py-nak frissítésre
+            update_team_names(left, right, category, stage)
         except Exception as e:
             set_team_source_error(str(e))
 

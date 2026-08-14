@@ -66,6 +66,12 @@
           <span>Vigaszágról döntőzik (Jobb)</span>
         </label>
 
+        <!-- ÚJ LIVE SCORE KAPCSOLÓ -->
+        <label class="check" style="grid-column: 1 / -1;">
+          <input type="checkbox" id="liveScore" checked />
+          <span><strong>LIVE SCORE kijelzés</strong> (Eredmények és OBS gombok mutatása)</span>
+        </label>
+
         <div class="settings-footer">
           <button class="btn btn-primary" id="saveBtn">Mentés</button>
           <div class="status">
@@ -81,7 +87,7 @@
     </section>
 
     <!-- MAIN (scores & actions) -->
-    <section class="panel main">
+    <section id="mainPanel" class="panel main">
       <div class="panel-header">
         <h2>Eredmények kezelése</h2>
         <div class="panel-actions">

@@ -160,3 +160,25 @@ body {
   background: #ff4a4a;
   opacity: 1;
 }
+
+/* --- AMIKOR A LIVE SCORE KI VAN KAPCSOLVA (.no-score) --- */
+
+/* 1. Eltüntetünk minden eredményelemet, szettet, időkérést */
+.overlay.no-score .set-history,
+.overlay.no-score .set-box2,
+.overlay.no-score .score,
+.overlay.no-score .timeouts {
+  display: none !important;
+}
+
+/* 2. Átrendezzük az overlay-t egyetlen oszlopossá */
+.overlay.no-score {
+  grid-template-columns: 1fr !important;
+  min-width: 320px;
+}
+
+/* 3. A csapatneveket elrendezzük középre, így letisztult névkártyát kapunk */
+.overlay.no-score .team-name {
+  padding-left: 14px;
+  padding-right: 14px;
+}

@@ -46,8 +46,21 @@ function detail_sets_to_win(s){
   return `Győzelemhez szükséges szettek (Bal - Jobb): ${reqL}${consL} - ${reqR}${consR}`;
 }
 
+function getSettingsPayload() {
+  return {
+    bo: document.getElementById('bo').value,
+    team_source_url: document.getElementById('teamUrl').value || "",
+    team_source_enabled: document.getElementById('teamEnabled').value === "1",
+    left: document.getElementById('leftName').value || "Bal",
+    right: document.getElementById('rightName').value || "Jobb",
+    consLeft: document.getElementById('consLeft').checked,
+    consRight: document.getElementById('consRight').checked,
+    live_score: document.getElementById('liveScore').checked, // ÚJ
+  };
+}
+
 function wireEditingGuards(){
-  const ids = ['bo','teamUrl','teamEnabled','leftName','rightName','consLeft','consRight'];
+  const ids = ['bo','teamUrl','teamEnabled','leftName','rightName','consLeft','consRight','liveScore'];
   for (const id of ids){
     const el = document.getElementById(id);
     if (!el) continue;
@@ -71,6 +84,14 @@ async function refresh(){
   setValueIfNotEditing(document.getElementById('teamEnabled'), s.match.team_source_enabled ? "1" : "0");
   setValueIfNotEditing(document.getElementById('leftName'), s.match.teams.left);
   setValueIfNotEditing(document.getElementById('rightName'), s.match.teams.right);
+
+  // Live Score toggle & fő panel elrejtése
+  const isLive = s.match.live_score !== false;
+  setValueIfNotEditing(document.getElementById('liveScore'), isLive);
+  const mainPanel = document.getElementById('mainPanel');
+  if (mainPanel) {
+    mainPanel.style.display = isLive ? "block" : "none";
+  }
 
   // consolation toggles
   const consLeft = document.getElementById('consLeft');
@@ -120,53 +141,17 @@ function wireButtons(){
   document.getElementById('swapBtnTop').addEventListener('click', async () => { await post('swap_sides'); await refresh(); });
   document.getElementById('resetMatchBtnTop').addEventListener('click', async () => { await post('reset_match'); await refresh(); });
 
-  // game format
-  document.getElementById('bo').addEventListener('change', async () => {
-    const payload = {
-      bo: document.getElementById('bo').value,
-      team_source_url: document.getElementById('teamUrl').value || "",
-      team_source_enabled: document.getElementById('teamEnabled').value === "1",
-      left: document.getElementById('leftName').value || "Bal",
-      right: document.getElementById('rightName').value || "Jobb",
-      consLeft: document.getElementById('consLeft').checked,
-      consRight: document.getElementById('consRight').checked,
-    };
-    await post('set_settings', payload);
-    editing = false; // mentés után engedjük a sync-et
-    await refresh();
-  });
-
-  // API team name update
-  document.getElementById('teamEnabled').addEventListener('change', async () => {
-    const payload = {
-      bo: document.getElementById('bo').value,
-      team_source_url: document.getElementById('teamUrl').value || "",
-      team_source_enabled: document.getElementById('teamEnabled').value === "1",
-      left: document.getElementById('leftName').value || "Bal",
-      right: document.getElementById('rightName').value || "Jobb",
-      consLeft: document.getElementById('consLeft').checked,
-      consRight: document.getElementById('consRight').checked,
-    };
-    await post('set_settings', payload);
-    editing = false; // mentés után engedjük a sync-et
-    await refresh();
-  });
-
-  // save settings
-  document.getElementById('saveBtn').addEventListener('click', async () => {
-    const payload = {
-      bo: document.getElementById('bo').value,
-      team_source_url: document.getElementById('teamUrl').value || "",
-      team_source_enabled: document.getElementById('teamEnabled').value === "1",
-      left: document.getElementById('leftName').value || "Bal",
-      right: document.getElementById('rightName').value || "Jobb",
-      consLeft: document.getElementById('consLeft').checked,
-      consRight: document.getElementById('consRight').checked,
-    };
-    await post('set_settings', payload);
+  // game format / API toggles / save
+  const saveSettingsHandler = async () => {
+    await post('set_settings', getSettingsPayload());
     editing = false;
     await refresh();
-  });
+  };
+
+  document.getElementById('bo').addEventListener('change', saveSettingsHandler);
+  document.getElementById('teamEnabled').addEventListener('change', saveSettingsHandler);
+  document.getElementById('saveBtn').addEventListener('click', saveSettingsHandler);
+  document.getElementById('liveScore').addEventListener('change', saveSettingsHandler);
 
   // top quick actions
   document.getElementById('undoBtnTop').addEventListener('click', async () => { await post('undo'); await refresh(); });

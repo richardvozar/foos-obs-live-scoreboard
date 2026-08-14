@@ -7,6 +7,13 @@ async function pull() {
   // Fejléc frissítése
   document.getElementById("match-header").textContent = `${s.match.category} - ${s.match.stage}`;
 
+  // LIVE SCORE KAPCSOLÓ KEZELÉSE (ÚJ)
+  const isLiveScore = s.match.live_score !== false;
+  const overlayEl = document.querySelector(".overlay");
+  if (overlayEl) {
+    overlayEl.classList.toggle("no-score", !isLiveScore);
+  }
+
   // Nézzük meg a gólállást a váltáshoz
   toggleSets(s.score.goals_left, s.score.goals_right);
 
@@ -23,9 +30,10 @@ function toggleSets(goalsLeft, goalsRight) {
   const sgLeft = document.getElementById("sets-goals-left");
   const sgRight = document.getElementById("sets-goals-right");
 
-  // Csak a kis szett-történeteket kapcsolgatjuk a gólállás szerint (0:0-nál látható)
-  sgLeft.classList.toggle("visible", isZeroZero);
-  sgRight.classList.toggle("visible", isZeroZero);
+  if (sgLeft && sgRight) {
+    sgLeft.classList.toggle("visible", isZeroZero);
+    sgRight.classList.toggle("visible", isZeroZero);
+  }
 }
 
 function arraysEqual(a, b) {
@@ -61,7 +69,7 @@ function updateTeam(side, s, prev) {
   const setsGoalsEl = document.getElementById(`sets-goals-${side}`);
   const prevSets = prev ? prev.score[`sets_history_${side}`] : [];
 
-  if (!arraysEqual(sets_history, prevSets)) {
+  if (setsGoalsEl && !arraysEqual(sets_history, prevSets)) {
     setsGoalsEl.innerHTML = "";
 
     sets_history.slice(-6).forEach((setScore, i) => {
@@ -77,12 +85,13 @@ function updateTeam(side, s, prev) {
 
   // IDŐKÉRÉSEK (TIMEOUTS) pöttyök frissítése
   const toEl = document.getElementById(`to-${side}`);
-  toEl.innerHTML = "";
-
-  for (let i = 0; i < 2; i++) {
-    const el = document.createElement("div");
-    el.className = `to ${i < timeouts ? 'used' : ''}`;
-    toEl.appendChild(el);
+  if (toEl) {
+    toEl.innerHTML = "";
+    for (let i = 0; i < 2; i++) {
+      const el = document.createElement("div");
+      el.className = `to ${i < timeouts ? 'used' : ''}`;
+      toEl.appendChild(el);
+    }
   }
 }
 
