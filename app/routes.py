@@ -76,6 +76,14 @@ def action():
         S.action_goal("left", -1)
         return jsonify({"ok": True})
 
+    if action == "timeout_left_plus":
+        S.action_timeout("left", False)
+        return jsonify({"ok": True})
+
+    if action == "timeout_right_plus":
+        S.action_timeout("right", False)
+        return jsonify({"ok": True})
+
     if action == "goal_right_minus":
         S.action_goal("right", -1)
         return jsonify({"ok": True})

@@ -182,3 +182,53 @@ body {
   padding-left: 14px;
   padding-right: 14px;
 }
+
+/* ==========================================
+   OSZLOP ALATTI CÍMKÉK HAJSZÁLPONTOS IGAZÍTÁSA
+   ========================================== */
+
+.overlay-hints-row {
+  grid-column: 1 / -1 !important; /* Átéri a teljes scoreboard rácsot széltében! */
+  display: grid !important;
+  grid-template-columns: subgrid !important; /* Hajszálpontosan átveszi a felette lévő oszlopok szélességét */
+  align-items: center !important;
+  background: rgba(10, 15, 26, 0.95) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
+  height: 24px !important;
+}
+
+.hint-empty {
+  /* Üres helykitöltők a nevek és a meccstörténet alatt */
+}
+
+.hint-col {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.8px !important;
+  text-transform: uppercase !important;
+  height: 100% !important;
+}
+
+.col-set {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+.col-goal {
+  color: #38bdf8 !important;
+}
+
+.col-timeout {
+  color: #f87171 !important;
+}
+
+/* ==========================================
+   ELREJTÉS, HA A LIVE SCORE KI VAN KAPCSOLVA
+   ========================================== */
+
+.no-score .overlay-hints-row,
+body.no-score .overlay-hints-row {
+  display: none !important;
+}

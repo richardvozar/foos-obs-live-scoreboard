@@ -13,9 +13,9 @@ HOST = "127.0.0.1"
 PORT = 4455
 PASSWORD = "obswsVCSE2026"
 MEDIA_SOURCE_INPUT_NAME = "replay_media_source"
-VLC_SOURCE_INPUT_NAME = "szcse_vlc_source"
+VLC_SOURCE_INPUT_NAME = "vlc_source"
 LIVE_SCENE = "table1_live_scene"
-VLC_SCENE = "szcse_vlc"
+VLC_SCENE = "vlc_replays"
 #SZCSE_ADMIN_USER = "vcse"
 #SZCSE_ADMIN_PW = "VIHAR2026sarok"
 

@@ -4,7 +4,7 @@ import threading
 import requests
 from .rules import required_sets_to_win, set_target
 
-TOURID = 998
+TOURID = 17
 TABLEID = 1
 TEAM_SOURCE_URL_DEFAULT = f"https://live.szegedicsocso.hu/table.php?tourid={TOURID}&tableid={TABLEID}"
 POST_RESULT_URL = 'https://admin.szegedicsocso.hu/live-ajax.php'
@@ -413,22 +413,38 @@ def action_goal(side: str, delta: int):
 
 
 @with_lock
-def action_timeout(side: str):
-    if side == "left":
-        if _STATE["score"]["timeouts_left"] > 0:
-            _STATE["score"]["timeouts_left"] -= 1
-            _STATE["score"]["timeouts_left_string"] = get_timeout_emoji(_STATE["score"]["timeouts_left"])
-            _STATE["meta"]["message"] = "Időkérés – Bal"
+def action_timeout(side: str, is_minus: bool = True):
+    if is_minus:
+        if side == "left":
+            if _STATE["score"]["timeouts_left"] > 0:
+                _STATE["score"]["timeouts_left"] -= 1
+                _STATE["score"]["timeouts_left_string"] = get_timeout_emoji(_STATE["score"]["timeouts_left"])
+                _STATE["meta"]["message"] = "Időkérés – Bal"
+            else:
+                _STATE["meta"]["message"] = "Bal: nincs több időkérés ebben a szettben"
         else:
-            _STATE["meta"]["message"] = "Bal: nincs több időkérés ebben a szettben"
+            if _STATE["score"]["timeouts_right"] > 0:
+                _STATE["score"]["timeouts_right"] -= 1
+                _STATE["score"]["timeouts_right_string"] = get_timeout_emoji(_STATE["score"]["timeouts_right"])
+                _STATE["meta"]["message"] = "Időkérés – Jobb"
+            else:
+                _STATE["meta"]["message"] = "Jobb: nincs több időkérés ebben a szettben"
     else:
-        if _STATE["score"]["timeouts_right"] > 0:
-            _STATE["score"]["timeouts_right"] -= 1
-            _STATE["score"]["timeouts_right_string"] = get_timeout_emoji(_STATE["score"]["timeouts_right"])
-            _STATE["meta"]["message"] = "Időkérés – Jobb"
+        if side == "left":
+            if _STATE["score"]["timeouts_left"] < 2:
+                _STATE["score"]["timeouts_left"] += 1
+                _STATE["score"]["timeouts_left_string"] = get_timeout_emoji(_STATE["score"]["timeouts_left"])
+                _STATE["meta"]["message"] = "Időkérés Visszavonás – Bal"
+            else:
+                _STATE["meta"]["message"] = "Bal: már a maximum időkéréssel rendelkezik"
         else:
-            _STATE["meta"]["message"] = "Jobb: nincs több időkérés ebben a szettben"
-    _STATE["ts"] = now_ms()
+            if _STATE["score"]["timeouts_right"] < 2:
+                _STATE["score"]["timeouts_right"] += 1
+                _STATE["score"]["timeouts_right_string"] = get_timeout_emoji(_STATE["score"]["timeouts_right"])
+                _STATE["meta"]["message"] = "Időkérés Visszavonás – Jobb"
+            else:
+                _STATE["meta"]["message"] = "Jobb: már a maximum időkéréssel rendelkezik"
+        _STATE["ts"] = now_ms()
 
 @with_lock
 def update_team_names(left_name: str, right_name: str, category: str, stage: str):

@@ -161,9 +161,11 @@ function wireButtons(){
   document.getElementById('goalLeftBtn').addEventListener('click', async () => { await post('goal_left'); await refresh(); });
   document.getElementById('timeoutLeftBtn').addEventListener('click', async () => { await post('timeout_left'); await refresh(); });
   document.getElementById('goalLeftMinusBtn').addEventListener('click', async () => { await post('goal_left_minus'); await refresh(); });
+  document.getElementById('timeoutLeftPlusBtn').addEventListener('click', async () => { await post('timeout_left_plus'); await refresh(); });
 
   // right team buttons
   document.getElementById('goalRightBtn').addEventListener('click', async () => { await post('goal_right'); await refresh(); });
+  document.getElementById('timeoutRightPlusBtn').addEventListener('click', async () => { await post('timeout_right_plus'); await refresh(); });
   document.getElementById('timeoutRightBtn').addEventListener('click', async () => { await post('timeout_right'); await refresh(); });
   document.getElementById('goalRightMinusBtn').addEventListener('click', async () => { await post('goal_right_minus'); await refresh(); });
 
